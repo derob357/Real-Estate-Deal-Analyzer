@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offline - CRE Analyzer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+        }
+
+        .offline-container {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            margin: 2rem;
+        }
+
+        .offline-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 2rem;
+            background: #f3f4f6;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+
+        .offline-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 1rem;
+        }
+
+        .offline-subtitle {
+            font-size: 1.1rem;
+            color: #6b7280;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .offline-features {
+            background: #f9fafb;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            text-align: left;
+        }
+
+        .offline-features h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 1rem;
+        }
+
+        .offline-features ul {
+            list-style: none;
+            space-y: 0.5rem;
+        }
+
+        .offline-features li {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            color: #6b7280;
+        }
+
+        .offline-features li::before {
+            content: "✓";
+            color: #10b981;
+            font-weight: bold;
+            margin-right: 0.5rem;
+        }
+
+        .retry-button {
+            background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            margin-top: 1rem;
+        }
+
+        .retry-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.3);
+        }
+
+        .retry-button:active {
+            transform: translateY(0);
+        }
+
+        .app-info {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #e5e7eb;
+            color: #9ca3af;
+            font-size: 0.9rem;
+        }
+
+        .connection-status {
+            display: inline-flex;
+            align-items: center;
+            background: #fef2f2;
+            color: #dc2626;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .connection-status.online {
+            background: #f0fdf4;
+            color: #16a34a;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: currentColor;
+            margin-right: 0.5rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        @media (max-width: 640px) {
+            .offline-container {
+                padding: 2rem;
+                margin: 1rem;
+            }
+
+            .offline-title {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="offline-container">
+        <div class="offline-icon">
+            🏢
+        </div>
+
+        <h1 class="offline-title">You're Offline</h1>
+        <p class="offline-subtitle">
+            No internet connection detected. Some features may be limited, but you can still access cached data.
+        </p>
+
+        <div class="connection-status" id="connectionStatus">
+            <div class="status-dot"></div>
+            <span id="statusText">Offline</span>
+        </div>
+
+        <div class="offline-features">
+            <h3>Available Offline:</h3>
+            <ul>
+                <li>View cached property data</li>
+                <li>Access saved portfolio information</li>
+                <li>Review previously viewed market reports</li>
+                <li>Browse saved property alerts</li>
+                <li>Use financial calculators</li>
+            </ul>
+        </div>
+
+        <button class="retry-button" onclick="checkConnection()">
+            Check Connection
+        </button>
+
+        <div class="app-info">
+            <strong>CRE Analyzer</strong><br>
+            Commercial Real Estate Investment Platform<br>
+            Data will sync automatically when connection is restored
+        </div>
+    </div>
+
+    <script>
+        // Check online status
+        function updateConnectionStatus() {
+            const statusElement = document.getElementById('connectionStatus');
+            const statusText = document.getElementById('statusText');
+
+            if (navigator.onLine) {
+                statusElement.className = 'connection-status online';
+                statusText.textContent = 'Online - Connection restored';
+
+                // Redirect to main app after a short delay
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 2000);
+            } else {
+                statusElement.className = 'connection-status';
+                statusText.textContent = 'Offline';
+            }
+        }
+
+        function checkConnection() {
+            // Force a connection check
+            fetch('/api/health', {
+                method: 'HEAD',
+                cache: 'no-cache'
+            })
+            .then(() => {
+                window.location.href = '/';
+            })
+            .catch(() => {
+                alert('Still no connection. Please check your internet and try again.');
+            });
+        }
+
+        // Listen for online/offline events
+        window.addEventListener('online', updateConnectionStatus);
+        window.addEventListener('offline', updateConnectionStatus);
+
+        // Initial status check
+        updateConnectionStatus();
+
+        // Periodic connection check
+        setInterval(() => {
+            if (navigator.onLine) {
+                // Try to fetch a small resource to verify real connectivity
+                fetch('/api/health', {
+                    method: 'HEAD',
+                    cache: 'no-cache',
+                    timeout: 5000
+                })
+                .then(() => {
+                    updateConnectionStatus();
+                })
+                .catch(() => {
+                    // Network is available but server is unreachable
+                    console.log('Network available but server unreachable');
+                });
+            }
+        }, 30000); // Check every 30 seconds
+
+        // Show install prompt for PWA
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+
+            // Show install button
+            const installButton = document.createElement('button');
+            installButton.textContent = 'Install App';
+            installButton.className = 'retry-button';
+            installButton.style.marginLeft = '1rem';
+            installButton.onclick = async () => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    console.log('PWA install outcome:', outcome);
+                    deferredPrompt = null;
+                    installButton.style.display = 'none';
+                }
+            };
+
+            document.querySelector('.retry-button').parentNode.appendChild(installButton);
+        });
+    </script>
+</body>
+</html>
